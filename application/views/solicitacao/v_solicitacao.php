@@ -2,52 +2,57 @@
     $css_inicio = 'disabled';
     $css_analise = 'disabled';
     $css_conclusao = 'disabled';
+    $solicitacao = $solicitacao[0];
+    $data_inicio = (new \DateTime($solicitacao->data_solicitacao))->format('d-m-Y H:i:s').'<br>';
+    $data_conclusao = (new \DateTime($solicitacao->data))->format('d-m-Y H:i:s').'<br>';
     //echo '<pre>';
-    //print_r($status);
+    //print_r($solicitacao);
     //echo '</pre>';
-    foreach ($status as $key => $atual) {
-        if($atual->idstatus_solicitacao_certidao == 1){
+    $atual = $solicitacao->status_atual;
+        if($atual == 1){
             $css_inicio = "active";
-            $data_inicio = (new \DateTime($atual->data))->format('d-m-Y H:i:s').'<br>';
             $inicio = $data_inicio.'A solicitação foi iniciada e aguarda para ser analisada.';
             $analise = '';
             $conclusao1 = '';
-			 $conclusao2 = '';
+            $conclusao2 = '';
         }
-        if($atual->idstatus_solicitacao_certidao == 2){
+        if($atual == 2){
            $css_inicio = "complete";
            $css_analise = "active";
-           $data_analise = (new \DateTime($atual->data))->format('d-m-Y H:i:s').'<br>';
-           $analise = "$data_analise Solicitação esta sendo analisado por $atual->nome."; 
+           $data_analise = (new \DateTime($solicitacao->data))->format('d-m-Y H:i:s').'<br>';
+           $analise = "$data_analise Solicitação esta sendo analisado por $solicitacao->nome_usuario."; 
            $inicio = $data_inicio."A solicitação foi iniciada.";
+           $conclusao1 = '';
+           $conclusao2 = '';
         }
-        if($atual->idstatus_solicitacao_certidao == 3){
+        if($atual == 3){
             $css_conclusao = "active";
             $css_analise = "complete";
-            $data_conclusao = (new \DateTime($atual->data))->format('d-m-Y H:i:s').'<br>';
-            $analise = "$data_conclusao Solicitação foi analisada por $atual->nome.";
+            $css_inicio = "complete";
+            $inicio = $data_inicio."A solicitação foi iniciada.";
+            $analise = "Solicitação foi analisada por $solicitacao->nome_usuario.";
             $conclusao1 = "$data_conclusao Solicitação aprovada.";
             $conclusao2 = "$data_conclusao Solicitação aprovada, para visualisar a certidão clique "
-                    . "<a href='".base_url()."solicitacao_certidao/pdf/".$solicitacao[0]->idsolicitacao_certidao
-                    ."/".$solicitacao[0]->idcomarca."'>"
+                    . "<a href='".base_url()."solicitacao_certidao/pdf/".$solicitacao->uid
+                    ."/".$solicitacao->idcomarca."'>"
                     . "<span class='glyphicon glyphicon-print' aria-hidden='true'></span> aqui</a>.";
         }
-        if($atual->idstatus_solicitacao_certidao == 4){
+        if($atual == 4){
             $css_conclusao = "active";
             $css_analise = "complete";
-            $data_conclusao = (new \DateTime($atual->data))->format('d-m-Y H:i:s').'<br>';
-            $analise = "$data_conclusao Solicitação foi analisada por $atual->nome.";
+            $css_inicio = "complete";
+            $analise = "$data_conclusao Solicitação foi analisada por $solicitacao->nome_usuario.";
             $conclusao1 = "$data_conclusao Solicitação recusada.";
-            $conclusao2 = "$data_conclusao Solicitação recusada.<br> Justificativa: $atual->observacao";
-            
+            $conclusao2 = "$data_conclusao Solicitação recusada.<br> Justificativa: $solicitacao->observacao";
+            $inicio = $data_inicio."A solicitação foi iniciada.";
         }
-    }
+    
 ?>
 <section class="info_service">
     <div class="container">
     	
     	<div class="panel panel-default">
-			  <div class="panel-heading"><h3 class="panel-title">Acompanhamento de Solicitação da Certidão Negativa da Comarca de <?=$atual->comarca;?></h3></div>
+			  <div class="panel-heading"><h3 class="panel-title">Acompanhamento de Solicitação da Certidão Negativa da Comarca de <?=$solicitacao->comarca;?></h3></div>
 			  <div class="panel-body">
 			  	<div class="container">
                                         <div class="row bs-wizard" style="border-bottom:0;">
@@ -75,10 +80,10 @@
                                         </div>
                                 </div>
                               <?php 
-                              if($atual->idstatus_solicitacao_certidao == 3){
+                              if($solicitacao->status_atual == 3){
                                   echo '<p class="alert alert-success text-center"><b>'.$conclusao2.'</b></p>';
                               }
-                              if($atual->idstatus_solicitacao_certidao == 4){
+                              if($solicitacao->status_atual == 4){
                                   echo '<p class="alert alert-danger text-center"><b>'.$conclusao2.'</b></p>';
                               }
                               ?>
@@ -92,32 +97,22 @@
 			<div class="panel-heading">
 			    <h3 class="panel-title">
 			    	Dados da Certidão Negativa
-			    	<?php
-                                    if($solicitacao[0]->idtipo_solicitacao_certidao == 1){
-                                        echo " Cível";
-                                    }
-                                    elseif ($solicitacao[0]->idtipo_solicitacao_certidao == 2) {
-                                        echo " Criminal";
-                                    }
-                                    elseif ($solicitacao[0]->idtipo_solicitacao_certidao == 3) {
-                                        echo " Cível e Criminal";
-                                    }
-			    	?>
+			    	<?=$solicitacao->tipo;?>
 			    </h3>
 			</div>
 			<div class="panel-body">
-			    <p><label class="control-label">Nome:</label> <?=$solicitacao[0]->nome?></p>
-			    <p><label class="control-label">CPF:</label> <?=$solicitacao[0]->cpf?></p>
-			    <p><label class="control-label">RG:</label> <?=$solicitacao[0]->rg?> <?=$solicitacao[0]->rg_orgao_expeditor?></p>
-			    <p><label class="control-label">Data da Solicitação:</label> <?=(new \DateTime($solicitacao[0]->data_solicitacao))->format('d-m-Y H:i:s')?></p>
-			    <p><label class="control-label">Nacionalidade:</label> <?=$solicitacao[0]->nacionalidade?></p>
-			    <p><label class="control-label">Estado Civil:</label> <?=$solicitacao[0]->estado_civil?></p>
-			    <p><label class="control-label">Data de Nascimento:</label> <?=(new \DateTime($solicitacao[0]->data_nascimento))->format('d-m-Y')?></p>
-			    <p><label class="control-label">Nome da Mãe:</label> <?=$solicitacao[0]->filiacao_materna?></p>
-			    <p><label class="control-label">Nome do Pai:</label> <?=$solicitacao[0]->filiacao_paterna?></p>
-			    <p><label class="control-label">Email:</label> <?=$solicitacao[0]->email?></p>
-			    <p><label class="control-label">Endereço:</label> <?=$solicitacao[0]->endereco?></p>
-			    <p><label class="control-label">Profissão:</label> <?=$solicitacao[0]->profissao?></p>
+			    <p><label class="control-label">Nome:</label> <?=$solicitacao->nome_pessoa?></p>
+			    <p><label class="control-label">CPF:</label> <?=$solicitacao->cpf?></p>
+			    <p><label class="control-label">RG:</label> <?=$solicitacao->rg?> <?=$solicitacao->rg_orgao_expeditor?></p>
+			    <p><label class="control-label">Data da Solicitação:</label> <?=(new \DateTime($solicitacao->data_solicitacao))->format('d-m-Y H:i:s')?></p>
+			    <p><label class="control-label">Nacionalidade:</label> <?=$solicitacao->nacionalidade?></p>
+			    <p><label class="control-label">Estado Civil:</label> <?=$solicitacao->estado_civil?></p>
+			    <p><label class="control-label">Data de Nascimento:</label> <?=(new \DateTime($solicitacao->data_nascimento))->format('d-m-Y')?></p>
+			    <p><label class="control-label">Nome da Mãe:</label> <?=$solicitacao->filiacao_materna?></p>
+			    <p><label class="control-label">Nome do Pai:</label> <?=$solicitacao->filiacao_paterna?></p>
+			    <p><label class="control-label">Email:</label> <?=$solicitacao->email?></p>
+			    <p><label class="control-label">Endereço:</label> <?=$solicitacao->endereco?></p>
+			    <p><label class="control-label">Profissão:</label> <?=$solicitacao->profissao?></p>
 			</div>
 		</div>
 		

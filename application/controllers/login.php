@@ -37,11 +37,11 @@ class Login extends CI_Controller{
 			$query = $this->Usuario->buscar(array('numero_matricula'=>$usuario,'senha'=>$senha));
 	        if ($query->num_rows() > 0) {
 	         	$result = $query->result();
-	           	$query2 = $this->UsuarioComarca->buscar(array('idusuario'=>$result[0]->idusuario,'status'=>1));
+	           	$query2 = $this->UsuarioComarca->buscar(array('idusuario'=>$result[0]->id,'status'=>1));
 	                        
 	                       if ($query2->num_rows() > 0){
 	                        	
-	                            $this->session->set_userdata('usr_id',$result[0]->idusuario);
+	                            $this->session->set_userdata('usr_id',$result[0]->id);
 	                            $this->session->set_userdata('usr_name',$result[0]->nome);
 	                            $this->session->set_userdata('usr_foto',$result[0]->foto);
 								$this->session->set_userdata('usr_comarcas',$query2->result());

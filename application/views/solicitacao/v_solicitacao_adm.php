@@ -28,7 +28,7 @@
             $analise = "$data_conclusao Solicitação foi analisada por $atual->nome.";
             $conclusao1 = "$data_conclusao Solicitação aprovada.";
             $conclusao2 = "$data_conclusao Solicitação aprovada, para visualisar a certidão clique "
-                    . "<a href='".base_url()."solicitacao_certidao/pdf/".$solicitacao[0]->idsolicitacao_certidao
+                    . "<a href='".base_url()."solicitacao_certidao/pdf/".$solicitacao[0]->uid
                     ."/".$solicitacao[0]->idcomarca."'>"
                     . "<span class='glyphicon glyphicon-print' aria-hidden='true'></span> aqui</a>.";
         }
@@ -130,17 +130,7 @@
 			<div class="panel-heading">
 			    <h3 class="panel-title">
 			    	Dados da Certidão Negativa
-			    	<?php
-                                    if($solicitacao[0]->idtipo_solicitacao_certidao == 1){
-                                        echo " Cível";
-                                    }
-                                    elseif ($solicitacao[0]->idtipo_solicitacao_certidao == 2) {
-                                        echo " Criminal";
-                                    }
-                                    elseif ($solicitacao[0]->idtipo_solicitacao_certidao == 3) {
-                                        echo " Cível e Criminal";
-                                    }
-			    	?>
+			    	<?=$solicitacao[0]->tipo;?>
 			    </h3>
 			</div>
 			<div class="panel-body">

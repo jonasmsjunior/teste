@@ -14,20 +14,20 @@ class SolicitacaoCertidaoStatusSolicitacaoCertidao extends CI_Model{
         }
 		return FALSE;
     }
-    public function busca_id($id=NULL, $comarca=NULL){
-        if($id!=NULL and $comarca!=NULL){
+    public function busca_id($uid=NULL, $comarca=NULL){
+        if($uid!=NULL and $comarca!=NULL){
             //$this->db->select('*');
             $this->db->select('`usuario`.`nome`');
-			$this->db->select('`solicitacao_certidao_status_solicitacao_certidao`.`usuario_idusuario`');
+            $this->db->select('`solicitacao_certidao_status_solicitacao_certidao`.`idusuario`');
             $this->db->select('`comarca`.`nome` as `comarca`');
             $this->db->select('`idstatus_solicitacao_certidao`');
             $this->db->select('`data`');
             $this->db->select('`observacao`');
             
             $this->db->from('`solicitacao_certidao_status_solicitacao_certidao`');
-            $this->db->join('`usuario`', '`solicitacao_certidao_status_solicitacao_certidao`.`usuario_idusuario` = `usuario`.`idusuario`', 'left');
-            $this->db->join('`comarca`', '`comarca`.`idcomarca` = `solicitacao_certidao_status_solicitacao_certidao`.`idcomarca`');
-            $this->db->where(array('`idsolicitacao_certidao`'=>$id, '`comarca`.`idcomarca`' => $comarca));
+            $this->db->join('`usuario`', '`solicitacao_certidao_status_solicitacao_certidao`.`idusuario` = `usuario`.`id`', 'left');
+            $this->db->join('`comarca`', '`comarca`.`id` = `solicitacao_certidao_status_solicitacao_certidao`.`idcomarca`');
+            $this->db->where(array('`uidsolicitacao`'=>$uid, '`comarca`.`id`' => $comarca));
             $this->db->order_by('`idstatus_solicitacao_certidao`');
             return $this->db->get()->result();
         }else{
